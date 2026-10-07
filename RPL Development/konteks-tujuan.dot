@@ -1,0 +1,43 @@
+// Render: dot -Tpng -Gdpi=150 konteks-tujuan.dot -o ../01-konteks-tujuan.png
+digraph konteks {
+  graph [rankdir=LR, fontname="DejaVu Sans", pad=0.4, nodesep=0.9, ranksep=1.1, bgcolor="white",
+         labelloc=t, fontsize=22, label=<<B>Tujuan sistem: dari penanganan yang tersebar menjadi satu alur terlacak</B><BR/> >];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=12];
+  edge  [fontname="DejaVu Sans", fontsize=12, color="#6b6bd9", penwidth=2.2];
+
+  asis [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="9" COLOR="#d9806b" BGCOLOR="#fff4f0" STYLE="rounded">
+      <TR><TD><FONT POINT-SIZE="15"><B>Kondisi saat ini</B></FONT></TD></TR>
+      <TR><TD BGCOLOR="#ffd9cf" WIDTH="250">Fasilitas TI rusak<BR/>(PC lab, Wi-Fi, server, proyektor)</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#dcdcd4" WIDTH="250">Tidak tahu harus lapor ke mana;<BR/>hanya mengeluh di media sosial</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#dcdcd4" WIDTH="250">Informasi tersebar, tanpa<BR/>nomor tiket dan status</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#dcdcd4" WIDTH="250">Data kerusakan tidak terkumpul,<BR/>sulit dianalisis</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#ffd9cf" WIDTH="250">Penanganan terlambat,<BR/>kerusakan membesar</TD></TR>
+    </TABLE>>];
+
+  tobe [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="9" COLOR="#6b9a1a" BGCOLOR="#f3fbe3" STYLE="rounded">
+      <TR><TD><FONT POINT-SIZE="15"><B>Dengan Lapor Fasilitas TI</B></FONT></TD></TR>
+      <TR><TD BGCOLOR="#b5e55f" WIDTH="270">Lapor satu pintu<BR/>(web: foto + lokasi + detail)</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#dcdcd4" WIDTH="270">Nomor tiket &amp; status<BR/>dapat dilacak pengguna</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#b8abff" WIDTH="270">Verifikasi: AI memberi rekomendasi,<BR/>Admin memutuskan bila ragu</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#dcdcd4" WIDTH="270">Penugasan &amp; penanganan<BR/>oleh petugas pemeliharaan</TD></TR>
+      <TR><TD>▼</TD></TR>
+      <TR><TD BGCOLOR="#80e5de" WIDTH="270">Data terpusat → dashboard<BR/>untuk keputusan Kaprodi</TD></TR>
+    </TABLE>>];
+
+  goal [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="12" COLOR="#6b9a1a" BGCOLOR="#b5e55f" STYLE="rounded">
+      <TR><TD><B>Tujuan</B><BR/>Kendala fasilitas<BR/>diperbaiki sebelum<BR/>bertambah parah;<BR/>aktivitas praktikum dan<BR/>perkuliahan lancar;<BR/>kepercayaan pengguna<BR/>terjaga</TD></TR>
+    </TABLE>>];
+
+  asis -> tobe [label="  digantikan oleh  "];
+  tobe -> goal [label="  mencapai  "];
+}

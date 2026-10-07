@@ -1,0 +1,62 @@
+// Sumber diagram: docs/architecture.png
+// Render ulang: dot -Tpng -Gdpi=150 architecture.dot -o architecture.png
+digraph architecture {
+  graph [rankdir=TB, compound=true, fontname="DejaVu Sans", pad=0.4,
+         nodesep=0.55, ranksep=0.75, bgcolor="white", splines=true,
+         labelloc=t, fontsize=24,
+         label=<<B>Arsitektur Sistem Lapor Fasilitas TI</B><BR/><FONT POINT-SIZE="13">Angka pada panah = nomor hubungan pada Tabel 4</FONT><BR/> >];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12,
+         margin="0.22,0.14", penwidth=1.4];
+  edge  [fontname="DejaVu Sans", fontsize=11, color="#333333", penwidth=1.3, arrowsize=0.9];
+
+  // ---- Aktor ----
+  pengguna [label="Pengguna\n(Mahasiswa / Dosen)", fillcolor="#b5e55f", color="#6b9a1a"];
+  admin    [label="Admin\n(Tenaga Fakultas)",      fillcolor="#b5e55f", color="#6b9a1a"];
+  petugas  [label="Petugas\nPemeliharaan",         fillcolor="#b5e55f", color="#6b9a1a"];
+  {rank=same; pengguna; admin; petugas;}
+
+  // ---- Antarmuka ----
+  web [label="Antarmuka Web (responsif)\nform laporan · status · antrean verifikasi · dashboard",
+       fillcolor="#dcdcd4", color="#888880"];
+
+  // ---- Backend ----
+  subgraph cluster_backend {
+    label=<<B>Aplikasi Backend (modular monolith)</B>>; labeljust=l; fontsize=14;
+    style="rounded,dashed"; color="#6b6bd9"; penwidth=1.6; margin=18;
+
+    m1 [label="M1  Autentikasi\n& Hak Akses (RBAC)", fillcolor="#dcdcd4", color="#888880"];
+
+    subgraph cluster_modul {
+      label="Modul layanan"; labeljust=l; fontsize=12; style="rounded"; color="#aaaaaa"; margin=14;
+      m2 [label="M2  Pelaporan\n& Tiket",            fillcolor="#dcdcd4", color="#888880"];
+      m3 [label="M3  Verifikasi\n& Alur Kerja",       fillcolor="#dcdcd4", color="#888880"];
+      m4 [label="M4  Data Master\n(fasilitas, pengguna, petugas)", fillcolor="#dcdcd4", color="#888880"];
+      m5 [label="M5  Notifikasi",                     fillcolor="#dcdcd4", color="#888880"];
+      m6 [label="M6  Dashboard\n& Statistik",         fillcolor="#dcdcd4", color="#888880"];
+      {rank=same; m2; m4; m3; m5; m6;}
+    }
+  }
+
+  // ---- Layanan analisis, DB, e-mail ----
+  m7 [label="M7  Layanan Analisis Gambar\nOpenCV + model AI\n(validasi cepat · worker analisis)",
+      fillcolor="#b8abff", color="#8c7fd9"];
+  db [shape=cylinder, style="filled", label="PostgreSQL\nlaporan · foto · hasil analisis\nstatus · notifikasi · data master",
+      fillcolor="#80e5de", color="#1f9e94", margin="0.25,0.2"];
+  smtp [label="Server E-mail (SMTP)\neksternal", fillcolor="#f2f2ee", color="#888880", style="rounded,filled,dashed"];
+
+  // ---- Hubungan ----
+  pengguna -> web [label=" 1 · HTTPS"];
+  admin    -> web [label=" 1 · HTTPS"];
+  petugas  -> web [label=" 1 · HTTPS"];
+
+  web -> m1 [label=" 2 · REST/JSON + token (HTTPS)"];
+  m1  -> m3 [lhead=cluster_modul, label=" 3 · permintaan terotorisasi\n    (cek peran)"];
+
+  m2 -> m4 [label=" 4 · baca lokasi/fasilitas", constraint=false];
+  m3 -> m5 [label=" 8 · event perubahan status",  constraint=false];
+
+  m2 -> m7 [label=" 5 · validasi foto\n    (HTTP internal, sinkron)"];
+  m2 -> db [ltail=cluster_modul, label=" 6 · baca/tulis data milik modul (SQL)"];
+  m7 -> db [dir=both, label=" 7 · ambil foto dari antrean ⇄\n    simpan hasil + gambar anotasi"];
+  m5 -> smtp [label=" 9 · kirim e-mail (SMTP)"];
+}
